@@ -1,5 +1,6 @@
-from collections import defaultdict
+from collections import defaultdict, deque
 import heapq
+import random
 
 
 class Graph:
@@ -16,79 +17,94 @@ class Graph:
     def get_neighbors(self, v):
         return self.graph[v]
 
-    def bfs(self, start, goal):
-        queue = [(start, [start])]
+    def bfs(self, start):
         visited = set()
+        queue = deque([start])
+        result = []
 
         while queue:
-            vertex, path = queue.pop(0)
-
-            if vertex == goal:
-                return path
+            vertex = queue.popleft()
 
             if vertex not in visited:
                 visited.add(vertex)
+                result.append(vertex)
 
-                for neighbor, _ in self.get_neighbors(vertex):
-                    new_path = list(path)
-                    new_path.append(neighbor)
-                    queue.append((neighbor, new_path))
+                for neighbor, weight in self.get_neighbors(vertex):
+                    if neighbor not in visited:
+                        queue.append(neighbor)
 
-    def dfs(self, start, goal):
-        stack = [(start, [start])]
+        return result
+
+    def dfs(self, start):
         visited = set()
+        stack = [(start, [start])]
+        result = []
 
         while stack:
             vertex, path = stack.pop()
 
-            if vertex == goal:
-                return path
-
             if vertex not in visited:
                 visited.add(vertex)
+                result.append(vertex)
 
-                for neighbor, _ in self.get_neighbors(vertex):
-                    new_path = list(path)
-                    new_path.append(neighbor)
-                    stack.append((neighbor, new_path))
+                for neighbor, weight in self.get_neighbors(vertex):
+                    if neighbor not in visited:
+                        new_path = list(path)
+                        new_path.append(neighbor)
+                        stack.append((neighbor, new_path))
 
-    def dijkstra(self, start, goal):
-        heap = [(0, start, [])]
+        return result
+
+    def dijkstra(self, start, vertices):
+        distances = {v: float('inf') for v in range(vertices)}
+        distances[start] = 0
+        heap = [(0, start)]
         visited = set()
 
         while heap:
-            (cost, vertex, path) = heapq.heappop(heap)
+            (cost, vertex) = heapq.heappop(heap)
 
             if vertex not in visited:
                 visited.add(vertex)
-                path = path + [vertex]
-
-                if vertex == goal:
-                    return path
 
                 for neighbor, w in self.get_neighbors(vertex):
                     if neighbor not in visited:
-                        heapq.heappush(heap, (cost + w, neighbor, path))
+                        new_cost = cost + w
+                        if new_cost < distances[neighbor]:
+                            distances[neighbor] = new_cost
+                            heapq.heappush(heap, (new_cost, neighbor))
 
-    def astar(self, start, goal):
+        return distances
 
-        heap = [(0, start, [])]
-        visited = set()
+    def bellman_ford(self, start, vertices):
+        distances = {node: float('inf') for node in range(vertices)}
+        distances[start] = 0
+        pq = [(0, start)]
 
-        while heap:
-            (cost, vertex, path) = heapq.heappop(heap)
+        while pq:
+            (dist, u) = heapq.heappop(pq)
+            if dist > distances[u]:
+                continue
+            for v, w in self.graph[u]:
+                alt = dist + w
+                if alt < distances[v]:
+                    distances[v] = alt
+                    heapq.heappush(pq, (alt, v))
 
-            if vertex not in visited:
-                visited.add(vertex)
-                path = path + [vertex]
+        for u in self.graph:
+            for v, w in self.graph[u]:
+                if distances[u] != float('inf') and distances[u] + w < distances[v]:
+                    raise ValueError("Graph contains negative-weight cycle")
 
-                if vertex == goal:
-                    return path
+        return distances
 
-                for neighbor, w in self.get_neighbors(vertex):
-                    if neighbor not in visited:
-                        heuristic = self.get_heuristic(neighbor, goal)
-                        heapq.heappush(heap, (cost + w + heuristic, neighbor, path))
 
-    def get_heuristic(self, v, goal):
-        return abs(v[0] - goal[0]) + abs(v[1] - goal[1])
+def create_random_graph(n_vertices, edge_prob, weight_range, directed):
+    graph = Graph(directed)
+    for i in range(n_vertices):
+        for j in range(i + 1, n_vertices):
+            if random.random() < edge_prob:
+                weight = random.randint(*weight_range)
+                graph.add_edge(i, j, weight)
+
+    return graph
