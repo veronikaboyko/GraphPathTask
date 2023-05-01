@@ -10,5 +10,5 @@
 
 + BFS
 + DFS
-+ dijkstra
-+ A-star
++ Dijkstra
++ Bellman-Ford
