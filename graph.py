@@ -94,7 +94,7 @@ class Graph:
         for u in self.graph:
             for v, w in self.graph[u]:
                 if distances[u] != float('inf') and distances[u] + w < distances[v]:
-                    raise ValueError("Graph contains negative-weight cycle")
+                    raise ValueError('Graph contains negative-weight cycle')
 
         return distances
 
