@@ -9,7 +9,7 @@ class TestGraphMemory:
     def test_bfs(self):
         print('BFS memory')
         for d in self.data:
-            for graph, _ in d:
+            for graph in d:
                 tracemalloc.start()
                 graph.bfs(0)
                 mem = tracemalloc.get_traced_memory()[1]
@@ -20,34 +20,34 @@ class TestGraphMemory:
     def test_dfs(self):
         print('DFS memory')
         for d in self.data:
-            for graph, _ in d:
+            for graph in d:
                 tracemalloc.start()
                 graph.dfs(0)
                 mem = tracemalloc.get_traced_memory()[1]
                 tracemalloc.stop()
-                print(f'{mem / 10**6:.5}')
+                print(f'{mem / 10 ** 6:.5}')
         print()
 
     def test_dijkstra(self):
         print('dijkstra memory')
         for d in self.data:
-            for graph, vertices in d:
+            for graph in d:
                 tracemalloc.start()
-                graph.dijkstra(0, vertices)
+                graph.dijkstra(0)
                 mem = tracemalloc.get_traced_memory()[1]
                 tracemalloc.stop()
-                print(f'{mem / 10**6:.5}')
+                print(f'{mem / 10 ** 6:.5}')
         print()
 
     def test_bellman_ford(self):
         print('bellman_ford memory')
         for d in self.data:
-            for graph, vertices in d:
+            for graph in d:
                 tracemalloc.start()
-                graph.bellman_ford(0, vertices)
+                graph.bellman_ford(0)
                 mem = tracemalloc.get_traced_memory()[1]
                 tracemalloc.stop()
-                print(f'{mem / 10**6:.5}')
+                print(f'{mem / 10 ** 6:.5}')
 
 
 if __name__ == '__main__':
@@ -61,9 +61,9 @@ if __name__ == '__main__':
     rnd_data_500 = create_random_graph(500, 0.2, (1, 10), True)
     rnd_data_1000 = create_random_graph(1000, 0.2, (1, 10), True)
 
-    data = [(best_data_100, 100), (best_data_500, 500), (best_data_1000, 1000), (worst_data_100, 100),
-            (worst_data_500, 500), (worst_data_1000, 1000), (rnd_data_100, 100), (rnd_data_500, 500),
-            (rnd_data_1000, 1000)]
+    data = [best_data_100, best_data_500, best_data_1000, worst_data_100,
+            worst_data_500, worst_data_1000, rnd_data_100, rnd_data_500,
+            rnd_data_1000]
 
     test = TestGraphMemory(data)
     test.test_bfs()
