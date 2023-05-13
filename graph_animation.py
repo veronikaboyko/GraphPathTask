@@ -2,55 +2,57 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
-from graph import Graph
+from algorithms import BFS, DFS, Dijkstra, BellmanFord
 
 
 class GraphAnimation:
-    def __init__(self, graph: Graph, algorithm):
+    def __init__(self, graph, algorithm):
         self.graph = graph
         self.algorithm = algorithm
-        self.edges = []
-        self.weights = {}
-        for i in range(graph.vertices):
-            for j in graph.graph[i]:
-                self.edges.append((i, j[0]))
-                self.weights[(i, j[0])] = j[1]
-        self.pos = nx.spring_layout(nx.Graph(self.edges))
+        self.edges = graph.get_edges()
+        self.weights = graph.get_weights()
+
+        self.nx_graph = nx.Graph()
+        self.nx_graph.add_nodes_from(range(graph.vertices))
+        self.nx_graph.add_edges_from(self.edges)
+
+        self.pos = nx.spring_layout(self.nx_graph)
+
         self.fig, self.ax = plt.subplots()
 
     def draw_graph(self):
-        nx.draw(nx.Graph(self.edges), self.pos, with_labels=True, node_color='lightblue')
+        nx.draw(self.nx_graph, self.pos, with_labels=True, node_color='lightblue')
 
     def draw_path(self, path):
-        try:
-            nx.draw_networkx_nodes(nx.Graph(self.edges), self.pos, nodelist=path, node_color='blue')
-            nx.draw_networkx_edges(nx.Graph(self.edges), self.pos, edgelist=list(zip(path, path[1:])),
-                                   edge_color='blue',
-                                   width=2)
-            if self.algorithm == 'dijkstra' or self.algorithm == 'bellman_ford':
-                nx.draw_networkx_edge_labels(nx.Graph(self.edges), self.pos, edge_labels=self.weights,
-                                             font_color='black')
-        except nx.NetworkXError as err:
-            print(f'Error: {err}Try to create another graph.')
+
+        nx.draw_networkx_nodes(self.nx_graph, self.pos, nodelist=path, node_color='blue')
+        nx.draw_networkx_edges(self.nx_graph, self.pos, edgelist=list(zip(path, path[1:])),
+                               edge_color='blue',
+                               width=2)
+        if self.algorithm == 'dijkstra' or self.algorithm == 'bellman_ford':
+            nx.draw_networkx_edge_labels(self.nx_graph, self.pos, edge_labels=self.weights,
+                                         font_color='black')
 
     def update(self, frame):
-        if self.algorithm == 'dijkstra' or self.algorithm == 'bellman_ford':
-            self.ax.clear()
+        self.ax.clear()
         self.draw_graph()
         self.draw_path(frame['path'])
         self.ax.set_title(frame['title'])
 
-    def animate(self, start):
+    def animate(self, start, end):
         if self.algorithm == 'dijkstra':
-            frames = self.graph.dijkstra_frame(start)
+            alg = Dijkstra(self.graph)
         elif self.algorithm == 'bellman_ford':
-            frames = self.graph.bellman_ford_frame(start)
+            alg = BellmanFord(self.graph)
         elif self.algorithm == 'bfs':
-            frames = self.graph.bfs_frame(start)
+            alg = BFS(self.graph)
         elif self.algorithm == 'dfs':
-            frames = self.graph.dfs_frame(start)
+            alg = DFS(self.graph)
         else:
             raise ValueError('Algorithm not supported')
+
+        path = alg.find_path(start, end)
+        frames = alg.frames
 
         ani = animation.FuncAnimation(self.fig, self.update, frames=frames, interval=1000, repeat=False)
         plt.show()

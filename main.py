@@ -11,13 +11,14 @@ def read_input():
     parser.add_argument('--edge_prob', type=float, default=0.2, help='Edge creation probability')
     parser.add_argument('--directed', type=str, default='False', help='Directed graph or not')
     parser.add_argument('--start', type=int, default=0, help='Starting vertex')
+    parser.add_argument('--end', type=int, default=9, help='Finish vertex')
     return parser.parse_args()
 
 
 def video_mode(g, args):
     graph_anim = GraphAnimation(g, args.algorithm)
     graph_anim.draw_graph()
-    graph_anim.animate(0)
+    graph_anim.animate(args.start, args.end)
 
 
 def default_mode(g, args):
