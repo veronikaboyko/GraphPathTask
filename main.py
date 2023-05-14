@@ -1,6 +1,7 @@
 from graph_animation import GraphAnimation
-from graph import create_random_graph
+from graph import create_random_graph, Graph
 import argparse
+from algorithms import BFS, DFS, Dijkstra, BellmanFord
 
 
 def read_input():
@@ -23,13 +24,16 @@ def video_mode(g, args):
 
 def default_mode(g, args):
     if args.algorithm == 'dijkstra':
-        print(g.dijkstra(0))
+        a = Dijkstra(g)
     elif args.algorithm == 'bellman_ford':
-        print(g.bellman_ford(0))
+        a = BellmanFord(g)
     elif args.algorithm == 'bfs':
-        print(g.bfs(0))
+        a = BFS(g)
     elif args.algorithm == 'dfs':
-        print(g.dfs(0))
+        a = DFS(g)
+    else:
+        raise ValueError('Algorithm not supported')
+    print(a.find_path(args.start, args.end))
 
 
 def main():
@@ -46,4 +50,11 @@ def main():
 
 
 if __name__ == '__main__':
+    negative_cycle_graph = Graph(3, directed=True)
+    negative_cycle_graph.add_edge(0, 1, 1)
+    negative_cycle_graph.add_edge(1, 2, -2)
+    negative_cycle_graph.add_edge(2, 0, -3)
+    alg = BellmanFord(negative_cycle_graph)
+    print(alg.find_path(0, 2))
+
     main()

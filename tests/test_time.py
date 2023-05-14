@@ -1,5 +1,6 @@
 import timeit
-from graph import *
+from graph import create_random_graph
+from algorithms import BFS, DFS, Dijkstra, BellmanFord
 
 
 class TestGraphTime:
@@ -10,28 +11,32 @@ class TestGraphTime:
         print('BFS time')
         for d in self.data:
             for graph in d:
-                print(f'{timeit.timeit(lambda: graph.bfs(0), number=100):.5}')
+                a = BFS(graph)
+                print(f'{timeit.timeit(lambda: a.find_path(0, 99), number=100):.5}')
         print()
 
     def test_dfs(self):
         print('DFS time')
         for d in self.data:
             for graph in d:
-                print(f'{timeit.timeit(lambda: graph.dfs(0), number=100):.5}')
+                a = DFS(graph)
+                print(f'{timeit.timeit(lambda: a.find_path(0, 99), number=100):.5}')
         print()
 
     def test_dijkstra(self):
         print('dijkstra time')
         for d in self.data:
             for graph in d:
-                print(f'{timeit.timeit(lambda: graph.dijkstra(0), number=100):.5}')
+                a = Dijkstra(graph)
+                print(f'{timeit.timeit(lambda: a.find_path(0, 99), number=100):.5}')
         print()
 
     def test_bellman_ford(self):
         print('bellman_ford time')
         for d in self.data:
             for graph in d:
-                print(f'{timeit.timeit(lambda: graph.bellman_ford(0), number=100):.5}')
+                a = BellmanFord(graph)
+                print(f'{timeit.timeit(lambda: a.find_path(0, 99), number=100):.5}')
 
 
 if __name__ == '__main__':

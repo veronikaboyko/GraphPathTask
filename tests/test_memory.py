@@ -1,5 +1,6 @@
 import tracemalloc
-from graph import *
+from graph import create_random_graph
+from algorithms import BFS, DFS, Dijkstra, BellmanFord
 
 
 class TestGraphMemory:
@@ -11,7 +12,8 @@ class TestGraphMemory:
         for d in self.data:
             for graph in d:
                 tracemalloc.start()
-                graph.bfs(0)
+                a = BFS(graph)
+                a.find_path(0, 99)
                 mem = tracemalloc.get_traced_memory()[1]
                 tracemalloc.stop()
                 print(f'{mem / 10 ** 6:.5}')
@@ -22,7 +24,8 @@ class TestGraphMemory:
         for d in self.data:
             for graph in d:
                 tracemalloc.start()
-                graph.dfs(0)
+                a = DFS(graph)
+                a.find_path(0, 99)
                 mem = tracemalloc.get_traced_memory()[1]
                 tracemalloc.stop()
                 print(f'{mem / 10 ** 6:.5}')
@@ -33,7 +36,8 @@ class TestGraphMemory:
         for d in self.data:
             for graph in d:
                 tracemalloc.start()
-                graph.dijkstra(0)
+                a = Dijkstra(graph)
+                a.find_path(0, 99)
                 mem = tracemalloc.get_traced_memory()[1]
                 tracemalloc.stop()
                 print(f'{mem / 10 ** 6:.5}')
@@ -44,7 +48,8 @@ class TestGraphMemory:
         for d in self.data:
             for graph in d:
                 tracemalloc.start()
-                graph.bellman_ford(0)
+                a = BellmanFord(graph)
+                a.find_path(0, 99)
                 mem = tracemalloc.get_traced_memory()[1]
                 tracemalloc.stop()
                 print(f'{mem / 10 ** 6:.5}')

@@ -18,7 +18,6 @@ class Dijkstra:
             (cost, vertex) = heapq.heappop(heap)
 
             if vertex == end:
-                self.frames.append({'path': list([vertex]), 'title': f'Dijkstra: Updating distance to {vertex}'})
                 path = reconstruct_path(previous, start, end)
                 self.frames.append(
                     {'path': list(path),
@@ -27,7 +26,6 @@ class Dijkstra:
 
             if vertex not in visited:
                 visited.append(vertex)
-                self.frames.append({'path': list([vertex]), 'title': f'Dijkstra: Updating distance to {vertex}'})
 
                 for neighbor, w in self.g.get_neighbors(vertex):
                     if neighbor not in visited:
@@ -36,6 +34,8 @@ class Dijkstra:
                             distances[neighbor] = new_cost
                             previous[neighbor] = vertex
                             heapq.heappush(heap, (new_cost, neighbor))
+                            self.frames.append({'path': list(reconstruct_path(previous, start, neighbor)),
+                                                'title': f'Dijkstra: Updating distance to {neighbor}'})
 
         self.frames.append({'path': [], 'title': f'Dijkstra: Path to {end} not found'})
         return []

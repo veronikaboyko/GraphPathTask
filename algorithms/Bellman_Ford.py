@@ -25,8 +25,8 @@ class BellmanFord:
                     distances[v] = alt
                     previous[v] = u
                     heapq.heappush(pq, (alt, v))
-                    self.frames.append(
-                        {'path': list([v]), 'title': f'Bellman-Ford: Updating distance to {v}'})
+                    self.frames.append({'path': list(reconstruct_path(previous, start, v)),
+                                        'title': f'Bellman-Ford: Updating distance to {v}'})
 
         for u in self.g.graph:
             for v, w in self.g.graph[u]:
