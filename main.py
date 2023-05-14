@@ -50,11 +50,4 @@ def main():
 
 
 if __name__ == '__main__':
-    negative_cycle_graph = Graph(3, directed=True)
-    negative_cycle_graph.add_edge(0, 1, 1)
-    negative_cycle_graph.add_edge(1, 2, -2)
-    negative_cycle_graph.add_edge(2, 0, -3)
-    alg = BellmanFord(negative_cycle_graph)
-    print(alg.find_path(0, 2))
-
     main()
