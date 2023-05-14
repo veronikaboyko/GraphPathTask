@@ -1,5 +1,5 @@
 from graph_animation import GraphAnimation
-from graph import create_random_graph, Graph
+from graph import create_random_graph
 import argparse
 from algorithms import BFS, DFS, Dijkstra, BellmanFord
 
