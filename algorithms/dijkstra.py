@@ -3,14 +3,14 @@ from path_recovery import reconstruct_path
 
 
 class Dijkstra:
-    def __init__(self, g):
-        self.g = g
+    def __init__(self, graph):
+        self.graph = graph
         self.frames = []
 
     def find_path(self, start, end=9):
-        distances = {v: float('inf') for v in range(self.g.vertices)}
+        distances = {v: float('inf') for v in range(self.graph.vertices)}
         distances[start] = 0
-        previous = {v: None for v in range(self.g.vertices)}
+        previous = {v: None for v in range(self.graph.vertices)}
         heap = [(0, start)]
         visited = []
 
@@ -27,7 +27,7 @@ class Dijkstra:
             if vertex not in visited:
                 visited.append(vertex)
 
-                for neighbor, w in self.g.get_neighbors(vertex):
+                for neighbor, w in self.graph.get_neighbors(vertex):
                     if neighbor not in visited:
                         new_cost = cost + w
                         if new_cost < distances[neighbor]:

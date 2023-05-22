@@ -1,6 +1,6 @@
 class DFS:
-    def __init__(self, g):
-        self.g = g
+    def __init__(self, graph):
+        self.graph = graph
         self.frames = []
 
     def find_path(self, start, end=9):
@@ -18,7 +18,7 @@ class DFS:
                 visited.add(vertex)
                 self.frames.append({'path': list(path), 'title': f'DFS: Visiting {vertex}'})
 
-                for neighbor, weight in self.g.get_neighbors(vertex):
+                for neighbor, weight in self.graph.get_neighbors(vertex):
                     if neighbor not in visited:
                         new_path = list(path)
                         new_path.append(neighbor)

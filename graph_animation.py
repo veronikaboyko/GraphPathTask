@@ -2,7 +2,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
-from algorithms import BFS, DFS, Dijkstra, BellmanFord
+from algorithms import Algorithm, algorithm_dict
 
 
 class GraphAnimation:
@@ -29,7 +29,7 @@ class GraphAnimation:
         nx.draw_networkx_edges(self.nx_graph, self.pos, edgelist=list(zip(path, path[1:])),
                                edge_color='blue',
                                width=2)
-        if self.algorithm == 'dijkstra' or self.algorithm == 'bellman_ford':
+        if self.algorithm == Algorithm.DIJKSTRA.value or self.algorithm == Algorithm.BELLMAN_FORD.value:
             nx.draw_networkx_edge_labels(self.nx_graph, self.pos, edge_labels=self.weights,
                                          font_color='black')
 
@@ -39,19 +39,13 @@ class GraphAnimation:
         self.draw_path(frame['path'])
         self.ax.set_title(frame['title'])
 
-    def animate(self, start, end):
-        if self.algorithm == 'dijkstra':
-            alg = Dijkstra(self.graph)
-        elif self.algorithm == 'bellman_ford':
-            alg = BellmanFord(self.graph)
-        elif self.algorithm == 'bfs':
-            alg = BFS(self.graph)
-        elif self.algorithm == 'dfs':
-            alg = DFS(self.graph)
+    def animate(self, start, end, mandatory_vertices):
+        if self.algorithm in algorithm_dict:
+            alg = algorithm_dict[self.algorithm](self.graph)
         else:
             raise ValueError('Algorithm not supported')
 
-        path = alg.find_path(start, end)
+        path = alg.find_path(start, end, mandatory_vertices)
         frames = alg.frames
 
         ani = animation.FuncAnimation(self.fig, self.update, frames=frames, interval=1000, repeat=False)

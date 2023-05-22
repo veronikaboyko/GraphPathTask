@@ -1,7 +1,7 @@
 from graph_animation import GraphAnimation
+from algorithms import algorithm_dict
 from graph import create_random_graph
 import argparse
-from algorithms import BFS, DFS, Dijkstra, BellmanFord
 
 
 def read_input():
@@ -13,38 +13,38 @@ def read_input():
     parser.add_argument('--directed', type=str, default='False', help='Directed graph or not')
     parser.add_argument('--start', type=int, default=0, help='Starting vertex')
     parser.add_argument('--end', type=int, default=9, help='Finish vertex')
+    parser.add_argument('--mandatory_vertices', nargs='+', type=int, help='List of mandatory vertices')
     return parser.parse_args()
 
 
 def video_mode(g, args):
     graph_anim = GraphAnimation(g, args.algorithm)
     graph_anim.draw_graph()
-    graph_anim.animate(args.start, args.end)
+    graph_anim.animate(args.start, args.end, args.mandatory_vertices)
 
 
 def default_mode(g, args):
-    if args.algorithm == 'dijkstra':
-        a = Dijkstra(g)
-    elif args.algorithm == 'bellman_ford':
-        a = BellmanFord(g)
-    elif args.algorithm == 'bfs':
-        a = BFS(g)
-    elif args.algorithm == 'dfs':
-        a = DFS(g)
+    algorithm_name = args.algorithm.lower()
+    if algorithm_name in algorithm_dict:
+        algorithm = algorithm_dict[algorithm_name](g)
+        print(algorithm.find_path(args.start, args.end, args.mandatory_vertices))
     else:
         raise ValueError('Algorithm not supported')
-    print(a.find_path(args.start, args.end))
 
 
 def main():
     args = read_input()
-    directed = args.directed.lower() == 'true'
+    modes = {
+        'video': video_mode,
+        'default': default_mode,
+    }
 
-    g = create_random_graph(args.vertices, args.edge_prob, (1, 10), directed)
-    if args.mode == 'video':
-        video_mode(g, args)
-    elif args.mode == 'default':
-        default_mode(g, args)
+    mode_name = args.mode.lower()
+    if mode_name in modes:
+        mode = modes[mode_name]
+        directed = args.directed.lower() == 'true'
+        g = create_random_graph(args.vertices, args.edge_prob, (1, 10), directed)
+        mode(g, args)
     else:
         raise ValueError('Mode not supported')
 

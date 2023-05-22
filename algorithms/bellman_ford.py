@@ -3,14 +3,14 @@ from path_recovery import reconstruct_path
 
 
 class BellmanFord:
-    def __init__(self, g):
-        self.g = g
+    def __init__(self, graph):
+        self.graph = graph
         self.frames = []
 
     def find_path(self, start, end=9):
-        distances = {node: float('inf') for node in range(self.g.vertices)}
+        distances = {node: float('inf') for node in range(self.graph.vertices)}
         distances[start] = 0
-        previous = {node: None for node in range(self.g.vertices)}
+        previous = {node: None for node in range(self.graph.vertices)}
         pq = [(0, start)]
 
         while pq:
@@ -19,7 +19,7 @@ class BellmanFord:
             if dist > distances[u]:
                 continue
 
-            for v, w in self.g.graph[u]:
+            for v, w in self.graph.graph[u]:
                 alt = dist + w
                 if alt < distances[v]:
                     distances[v] = alt
@@ -28,8 +28,8 @@ class BellmanFord:
                     self.frames.append({'path': list(reconstruct_path(previous, start, v)),
                                         'title': f'Bellman-Ford: Updating distance to {v}'})
 
-        for u in self.g.graph:
-            for v, w in self.g.graph[u]:
+        for u in self.graph.graph:
+            for v, w in self.graph.graph[u]:
                 if distances[u] != float('inf') and distances[u] + w < distances[v]:
                     raise ValueError('Graph contains negative-weight cycle')
 
